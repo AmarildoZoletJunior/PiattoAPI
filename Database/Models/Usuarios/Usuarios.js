@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const connection = require("../../Connection/connection");
+const receita = require("../Receitas/Receita");
 
 const Usuarios = connection.define("Usuarios",{
     id:{
@@ -8,7 +9,7 @@ const Usuarios = connection.define("Usuarios",{
         autoIncrement: true,
         primaryKey: true,
     },
-    nome:{
+    email:{
         type: Sequelize.STRING,
         allowNull: false,
     },
@@ -17,7 +18,11 @@ const Usuarios = connection.define("Usuarios",{
         allowNull: false,
     }
 })
+Usuarios.hasMany(receita, {
+    foreignKey: 'UserId'
+  });
 
+  receita.belongsTo(Usuarios);
 
 Usuarios.sync({force:false});
 

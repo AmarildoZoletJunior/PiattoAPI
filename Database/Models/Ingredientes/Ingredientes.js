@@ -14,7 +14,7 @@ const ingredientes = connection.define("Ingredientes",{
     }
 })
 
-// ingredientes.belongsToMany(receita);
+
 
 ingredientes.sync({force:false});
 

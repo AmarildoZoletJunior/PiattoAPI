@@ -1,7 +1,7 @@
 const sequelize = require("sequelize");
 const connection = require("../../Connection/connection");
 
-const receitasIngredientes = connection.define("Receitas_has_Ingredientes",{
+const receitasIngredientes = connection.define("receitas_has_ingredientes",{
     id:{
         type: sequelize.INTEGER,
         allowNull: false,
@@ -22,12 +22,12 @@ const receitasIngredientes = connection.define("Receitas_has_Ingredientes",{
     },
     UnidadeId:{
         type: sequelize.INTEGER,
-        references: {model: "Medidas", key: "id"},
+        references: {model: "medidas", key: "id"},
         onDelete: "CASCADE",
         allowNull: false,
     }
 })
 
-receitasIngredientes.sync({force:true});
+receitasIngredientes.sync({force:false});
 
 module.exports = receitasIngredientes;

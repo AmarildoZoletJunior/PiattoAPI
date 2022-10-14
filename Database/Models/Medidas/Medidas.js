@@ -1,19 +1,26 @@
 const sequelize = require("sequelize");
 const connection = require("../../Connection/connection");
+const receitasIngredientes = require("../Migrations/Receita_has_Ingredientes");
 
-const medidas = connection.define("Medidas",{
-    id:{
+const medidas = connection.define("Medidas", {
+    id: {
         type: sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
     },
-    nome:{
+    unidade: {
         type: sequelize.STRING,
         allowNull: false,
     }
 })
 
-medidas.sync({force:false});
+medidas.hasOne(receitasIngredientes, {
+    foreignKey: 'UnidadeId'
+});
+
+receitasIngredientes.belongsTo(medidas);
+
+medidas.sync({ force: false });
 
 module.exports = medidas;

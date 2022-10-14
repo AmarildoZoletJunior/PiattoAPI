@@ -2,12 +2,6 @@ const sequelize = require("sequelize");
 const connection = require("../../Connection/connection");
 
 const usuariosReceitas = connection.define("Usuario_has_Receitas",{
-    id:{
-        type: sequelize.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true,
-    },
     UsuarioId:{
         type: sequelize.INTEGER,
         references: {model: "usuarios", key: "id"},
@@ -22,6 +16,6 @@ const usuariosReceitas = connection.define("Usuario_has_Receitas",{
     }
 })
 
-usuariosReceitas.sync({force:true});
+usuariosReceitas.sync({force:false});
 
 module.exports = usuariosReceitas;
