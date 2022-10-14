@@ -1,0 +1,27 @@
+const sequelize = require("sequelize");
+const connection = require("../../Connection/connection");
+
+const usuariosReceitas = connection.define("Usuario_has_Receitas",{
+    id:{
+        type: sequelize.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    UsuarioId:{
+        type: sequelize.INTEGER,
+        references: {model: "usuarios", key: "id"},
+        onDelete: "CASCADE",
+        allowNull: false,
+    },
+    ReceitaID:{
+        type: sequelize.INTEGER,
+        references: {model: "receitas", key: "id"},
+        onDelete: "CASCADE",
+        allowNull: false,
+    }
+})
+
+usuariosReceitas.sync({force:true});
+
+module.exports = usuariosReceitas;

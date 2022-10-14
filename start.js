@@ -7,6 +7,14 @@ const cors = require("cors");
 const connection = require("./Database/Connection/connection");
 const app = express();
 
+//Importando models
+// const ReceitasIngredientes = require("./Database/Models/Migrations/Receita_has_Ingredientes");
+// const Ingredientes = require("./Database/Models/Ingredientes/Ingredientes")
+// const Usuarios = require("./Database/Models/Usuarios/Usuarios")
+// const Receitas = require("./Database/Models/Receitas/ReceitaModal")
+// const Medidas = require("./Database/Models/Medidas/Medidas");
+const UsuariosReceitas = require("./Database/Models/Migrations/Usuarios_has_Receitas");
+
 //Configurações
 const PORT = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({extended:false}));
