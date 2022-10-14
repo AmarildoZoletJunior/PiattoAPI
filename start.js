@@ -1,7 +1,10 @@
-//importando bibliotecas
+//Importando bibliotecas
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+
+//Iniciando banco e express
+const connection = require("./Database/Connection/connection");
 const app = express();
 
 //Configurações
@@ -9,12 +12,6 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(cors());
-
-
-
-
-//Iniciando conexão do banco com express.
-const connection = require("./Database/Connection/connection");
 
 
 //Start server.
