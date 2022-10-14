@@ -2,12 +2,6 @@ const sequelize = require("sequelize");
 const connection = require("../../Connection/connection");
 
 const receitasIngredientes = connection.define("receitas_has_ingredientes",{
-    id:{
-        type: sequelize.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-    },
     ReceitaId:{
         type: sequelize.INTEGER,
         references: {model: "receitas", key: "id"},

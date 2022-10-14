@@ -10,7 +10,7 @@ const app = express();
 //Importando models
 const Usuarios = require("./Database/Models/Usuarios/Usuarios")
 const Receitas = require("./Database/Models/Receitas/Receita")
-const Ingredientes = require("./Database/Models/Ingredientes/Ingredientes")
+const ingredientes = require("./Database/Models/Ingredientes/Ingredientes");
 const Medidas = require("./Database/Models/Medidas/Medidas");
 const UsuariosReceitas = require("./Database/Models/Migrations/Usuarios_has_Receitas");
 const ReceitasIngredientes = require("./Database/Models/Migrations/Receita_has_Ingredientes");
@@ -20,6 +20,21 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(cors());
+
+app.post("/",(req,res)=>{
+    UsuariosReceitas.create({
+        UsuarioId:50,
+        ReceitaId: 10,
+    })
+})
+
+app.get("/",(req,res)=>{
+    UsuariosReceitas.findAll({raw:true}).then((resposta)=>{
+        console.log(resposta)
+    })
+})
+
+
 
 
 //Start server.
