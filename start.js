@@ -2,6 +2,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const { Op } = require("sequelize");
 
 //Iniciando banco e express
 const connection = require("./Database/Connection/connection");
@@ -28,11 +29,23 @@ app.post("/",(req,res)=>{
     })
 })
 
-app.get("/",(req,res)=>{
-    UsuariosReceitas.findAll({raw:true}).then((resposta)=>{
-        console.log(resposta)
-    })
+
+//Sera obrigado mandar o id do usuario para esta requisição
+app.get("/favoritos",(req,res)=>{
+    let id = req.body.id;
+    UsuariosReceitas.findAll({where:{UsuarioId:id},raw:true}).then(async (resposta)=>{
+        let array = [];
+        await resposta.forEach(function(resp){
+            array.push(resp.ReceitaId);
+        });
+        console.log(array)
+        await Receitas.findAll({where:{id:{[Op.and]:[array]}},raw:true}).then((resposta)=>{
+             res.json(resposta)
+             console.log(resposta)
+        })
+    });
 })
+
 
 
 

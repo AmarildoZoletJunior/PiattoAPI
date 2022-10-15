@@ -17,7 +17,6 @@ const usuariosReceitas = connection.define("usuario_has_receitas",{
 })
 
 
-
 usuariosReceitas.sync({force:false});
 
 module.exports = usuariosReceitas;
