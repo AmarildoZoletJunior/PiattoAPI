@@ -11,8 +11,6 @@ const app = express();
 //Importando models
 const Usuarios = require("./Database/Models/Usuarios/Usuarios")
 const Receitas = require("./Database/Models/Receitas/Receita")
-const ingredientes = require("./Database/Models/Ingredientes/Ingredientes");
-const Medidas = require("./Database/Models/Medidas/Medidas");
 const UsuariosReceitas = require("./Database/Models/Migrations/UsuarioReceita/Usuarios_has_Receitas");
 const ReceitasIngredientes = require("./Database/Models/Migrations/ReceitaIngrediente/Receita_has_Ingredientes");
 
@@ -136,25 +134,6 @@ app.post("/receita",async (req,res)=>{
     })
 })
 
-//Listar receitas criadas pelo usuario
-app.get("/receitasCriadas",(req,res)=>{
-    let idUsuario = req.body.idUsuario;
-    Receitas.findAll({where:{UserId:idUsuario}}).then((resposta)=>{
-        console.log(resposta);
-        res.json(resposta)
-    })
-})
-
-//Remover receitas criadas pelo usuario
-app.delete("/receitasCriadas",(req,res)=>{
-    let idReceita = req.body.idReceita;
-    Receitas.destroy({where:{id:idReceita}}).then((resposta)=>{
-        console.log("Deletada com sucesso")
-    })
-})
-
-
-
 //receitas lista principal
 app.get("/receitas",async(req,res)=>{
     let decisao = req.body.decisao;
@@ -274,7 +253,22 @@ app.get("/receitas",async(req,res)=>{
     }
 })
 
+//Listar receitas criadas pelo usuario
+app.get("/receitasCriadas",(req,res)=>{
+    let idUsuario = req.body.idUsuario;
+    Receitas.findAll({where:{UserId:idUsuario}}).then((resposta)=>{
+        console.log(resposta);
+        res.json(resposta)
+    })
+})
 
+//Remover receitas criadas pelo usuario
+app.delete("/receitasCriadas",(req,res)=>{
+    let idReceita = req.body.idReceita;
+    Receitas.destroy({where:{id:idReceita}}).then((resposta)=>{
+        console.log("Deletada com sucesso")
+    })
+})
 
 
 
