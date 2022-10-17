@@ -88,52 +88,6 @@ app.get("/receita/:id",async (req,res)=>{
 })
 
 
-//Função postar receita
-app.post("/receita",async (req,res)=>{
-    let idUsuario = req.body.idUsuario;
-    let nomeReceita = req.body.nome;
-    let modoPreparo = req.body.preparo;
-    let rendimento = req.body.rendimento;
-    let ingredientes = req.body.ingredientes;
-    let quantidade = req.body.quantidade;
-    let medida = req.body.medida;
-
-
-    let ArrayIngredientes = ingredientes.split(",");
-    let arrayNovoIngredientes = await ArrayIngredientes.reduce(function(pV,cv){
-        let novo = Number(cv);
-        pV.push(novo);
-        return pV;
-       },[]);
-    let ArrayQuantidade = quantidade.split(",");
-    let arrayNovoQuantidade = await ArrayQuantidade.reduce(function(pV,cv){
-        let novo = Number(cv);
-        pV.push(novo);
-        return pV;
-       },[]);
-    
-
-   await Receitas.create({
-        nome:nomeReceita,
-        modo_de_preparo:modoPreparo,
-        rendimento: rendimento,
-        UserId: idUsuario,
-    }).then(async(res)=>{
-        for(let i = 0; i < arrayNovoIngredientes.length; i++ ){
-            ReceitasIngredientes.create({
-                ReceitaId:res.id,
-                IngredientesId:arrayNovoIngredientes[i],
-                MedidaId:medida,
-                Quantidade:arrayNovoQuantidade[i],
-            }).then(()=>{
-                console.log("Criado os ingredientes")
-            })
-        }
-    }).catch((err)=>{
-        console.log(err)
-    })
-})
-
 //receitas lista principal
 app.get("/receitas",async(req,res)=>{
     let decisao = req.body.decisao;
@@ -253,6 +207,53 @@ app.get("/receitas",async(req,res)=>{
     }
 })
 
+
+//Função Criar receita
+app.post("/receitasCriadas",async (req,res)=>{
+    let idUsuario = req.body.idUsuario;
+    let nomeReceita = req.body.nome;
+    let modoPreparo = req.body.preparo;
+    let rendimento = req.body.rendimento;
+    let ingredientes = req.body.ingredientes;
+    let quantidade = req.body.quantidade;
+    let medida = req.body.medida;
+
+
+    let ArrayIngredientes = ingredientes.split(",");
+    let arrayNovoIngredientes = await ArrayIngredientes.reduce(function(pV,cv){
+        let novo = Number(cv);
+        pV.push(novo);
+        return pV;
+       },[]);
+    let ArrayQuantidade = quantidade.split(",");
+    let arrayNovoQuantidade = await ArrayQuantidade.reduce(function(pV,cv){
+        let novo = Number(cv);
+        pV.push(novo);
+        return pV;
+       },[]);
+    
+
+   await Receitas.create({
+        nome:nomeReceita,
+        modo_de_preparo:modoPreparo,
+        rendimento: rendimento,
+        UserId: idUsuario,
+    }).then(async(res)=>{
+        for(let i = 0; i < arrayNovoIngredientes.length; i++ ){
+            ReceitasIngredientes.create({
+                ReceitaId:res.id,
+                IngredientesId:arrayNovoIngredientes[i],
+                MedidaId:medida,
+                Quantidade:arrayNovoQuantidade[i],
+            }).then(()=>{
+                console.log("Criado os ingredientes")
+            })
+        }
+    }).catch((err)=>{
+        console.log(err)
+    })
+})
+
 //Listar receitas criadas pelo usuario
 app.get("/receitasCriadas",(req,res)=>{
     let idUsuario = req.body.idUsuario;
@@ -270,6 +271,20 @@ app.delete("/receitasCriadas",(req,res)=>{
     })
 })
 
+app.put("/receitasCriadas",(req,res)=>{
+    let idReceita = req.body.idReceita;
+    let nome = req.body.nome;
+    let preparo = req.body.preparo;
+    let rendimento = req.body.rendimento;
+
+    Receitas.update(({
+        nome:nome,
+        modo_de_preparo:preparo,
+        rendimento:rendimento
+    }),{where:{id:idReceita}}).then(()=>{
+        console.log("Receita modificada com sucesso");
+    })
+})
 
 
 
