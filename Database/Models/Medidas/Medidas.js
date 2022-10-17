@@ -16,11 +16,12 @@ const medidas = connection.define("Medidas", {
 })
 
 medidas.hasOne(receitasIngredientes, {
-    foreignKey: 'UnidadeId'
+    foreignKey:'MedidaId'
 });
 
 receitasIngredientes.belongsTo(medidas);
 
 medidas.sync({ force: false });
+receitasIngredientes.sync();
 
 module.exports = medidas;

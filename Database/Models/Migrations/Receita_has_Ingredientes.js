@@ -14,10 +14,14 @@ const receitasIngredientes = connection.define("receitas_has_ingredientes",{
         onDelete: "CASCADE",
         allowNull: false,
     },
-    UnidadeId:{
+    MedidaId:{
         type: sequelize.INTEGER,
         references: {model: "medidas", key: "id"},
         onDelete: "CASCADE",
+        allowNull: false,
+    },
+    Quantidade:{
+        type: sequelize.STRING,
         allowNull: false,
     }
 })
