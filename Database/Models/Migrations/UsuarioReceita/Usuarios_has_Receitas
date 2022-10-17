@@ -1,5 +1,5 @@
 const sequelize = require("sequelize");
-const connection = require("../../Connection/connection");
+const connection = require("../../../Connection/connection");
 
 const usuariosReceitas = connection.define("usuario_has_receitas",{
     UsuarioId:{

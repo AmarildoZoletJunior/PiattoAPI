@@ -13,7 +13,7 @@ const Usuarios = require("./Database/Models/Usuarios/Usuarios")
 const Receitas = require("./Database/Models/Receitas/Receita")
 const ingredientes = require("./Database/Models/Ingredientes/Ingredientes");
 const Medidas = require("./Database/Models/Medidas/Medidas");
-const UsuariosReceitas = require("./Database/Models/Migrations/UsuarioReceita/");
+const UsuariosReceitas = require("./Database/Models/Migrations/UsuarioReceita/Usuarios_has_Receitas");
 const ReceitasIngredientes = require("./Database/Models/Migrations/ReceitaIngrediente/Receita_has_Ingredientes");
 
 //Configurações
