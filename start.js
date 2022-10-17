@@ -271,6 +271,8 @@ app.delete("/receitasCriadas",(req,res)=>{
     })
 })
 
+
+//Modificar Receita
 app.put("/receitasCriadas",(req,res)=>{
     let idReceita = req.body.idReceita;
     let nome = req.body.nome;
@@ -285,6 +287,26 @@ app.put("/receitasCriadas",(req,res)=>{
         console.log("Receita modificada com sucesso");
     })
 })
+
+//Criar usuario
+app.post("/usuario",(req,res)=>{
+    let regexEmail = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi;
+    let email = req.body.email;
+    let senha = req.body.senha;
+    let confirmarSenha = req.body.confirmarsenha;
+    if(email !== undefined && email !== null && regexEmail.test(email) === true){
+        if(senha !== undefined && senha !== null && senha.length > 3 && senha === confirmarSenha){
+    Usuarios.create({
+        email:senha,
+        senha:senha
+                 }).then((resposta)=>{
+                    console.log("criado com sucesso")
+                 })
+            }
+        }
+});
+
+
 
 
 
