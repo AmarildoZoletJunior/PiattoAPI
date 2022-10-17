@@ -61,7 +61,7 @@ app.get("/favoritos/:id",(req,res)=>{
     UsuariosReceitas.findAll({where:{UsuarioId:id},raw:true}).then(async (resposta)=>{
         let array = [];
         await resposta.forEach(function(resp){
-            array.push(resp.ReceitaId);
+             array.push(resp.ReceitaId);
         });
         console.log(array)
         await Receitas.findAll({where:{id:{[Op.and]:[array]}},raw:true}).then((resposta)=>{
@@ -95,6 +95,56 @@ app.get("/receita/:id",async (req,res)=>{
         console.log(erro)
     })
 })
+
+app.post("/receita",async (req,res)=>{
+    let idUsuario = req.body.idUsuario;
+    let nomeReceita = req.body.nome;
+    let modoPreparo = req.body.preparo;
+    let rendimento = req.body.rendimento;
+    let ingredientes = req.body.ingredientes;
+    let quantidade = req.body.quantidade;
+    let medida = req.body.medida;
+
+
+    let ArrayIngredientes = ingredientes.split(",");
+    let arrayNovoIngredientes = await ArrayIngredientes.reduce(function(pV,cv){
+        let novo = Number(cv);
+        pV.push(novo);
+        return pV;
+       },[]);
+    let ArrayQuantidade = quantidade.split(",");
+    let arrayNovoQuantidade = await ArrayQuantidade.reduce(function(pV,cv){
+        let novo = Number(cv);
+        pV.push(novo);
+        return pV;
+       },[]);
+    
+
+   await Receitas.create({
+        nome:nomeReceita,
+        modo_de_preparo:modoPreparo,
+        rendimento: rendimento,
+        UserId: idUsuario,
+    }).then(async(res)=>{
+        for(let i = 0; i < arrayNovoIngredientes.length; i++ ){
+            ReceitasIngredientes.create({
+                ReceitaId:res.id,
+                IngredientesId:arrayNovoIngredientes[i],
+                MedidaId:medida,
+                Quantidade:arrayNovoQuantidade[i],
+            }).then(()=>{
+                console.log("Criado os ingredientes")
+            })
+        }
+    }).catch((err)=>{
+        console.log(err)
+    })
+})
+
+app.delete("/receita/:id",(req,res)=>{
+    
+})
+
 
 app.get("/receitas",async(req,res)=>{
     let decisao = req.body.decisao;
@@ -213,6 +263,9 @@ app.get("/receitas",async(req,res)=>{
         })
     }
 })
+
+
+
 
 
 
