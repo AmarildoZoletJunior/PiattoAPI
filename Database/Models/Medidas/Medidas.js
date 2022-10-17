@@ -1,6 +1,6 @@
 const sequelize = require("sequelize");
 const connection = require("../../Connection/connection");
-const receitasIngredientes = require("../Migrations/Receita_has_Ingredientes");
+const receitasIngredientes = require("../Migrations/ReceitaIngrediente/Receita_has_Ingredientes");
 
 const medidas = connection.define("Medidas", {
     id: {

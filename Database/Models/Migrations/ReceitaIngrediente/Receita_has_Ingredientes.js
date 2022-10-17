@@ -1,5 +1,5 @@
 const sequelize = require("sequelize");
-const connection = require("../../Connection/connection");
+const connection = require("../../../Connection/connection");
 
 const receitasIngredientes = connection.define("receitas_has_ingredientes",{
     ReceitaId:{

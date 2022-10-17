@@ -13,8 +13,8 @@ const Usuarios = require("./Database/Models/Usuarios/Usuarios")
 const Receitas = require("./Database/Models/Receitas/Receita")
 const ingredientes = require("./Database/Models/Ingredientes/Ingredientes");
 const Medidas = require("./Database/Models/Medidas/Medidas");
-const UsuariosReceitas = require("./Database/Models/Migrations/Usuarios_has_Receitas");
-const ReceitasIngredientes = require("./Database/Models/Migrations/Receita_has_Ingredientes");
+const UsuariosReceitas = require("./Database/Models/Migrations/UsuarioReceita/");
+const ReceitasIngredientes = require("./Database/Models/Migrations/ReceitaIngrediente/Receita_has_Ingredientes");
 
 //Configurações
 const PORT = process.env.PORT || 3000;
@@ -22,15 +22,8 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(cors());
 
-app.post("/",(req,res)=>{
-    UsuariosReceitas.create({
-        UsuarioId:50,
-        ReceitaId: 10,
-    })
-})
 
-
-//Favoritos deletado
+//Deletar dos favoritos
 app.delete("/favoritos/:id",(req,res)=>{
     let id = req.params.id;
     let idUsuario = req.body.idUsuario;
@@ -42,7 +35,7 @@ app.delete("/favoritos/:id",(req,res)=>{
     })
 })
 
-
+//Adicionar aos favoritos
 app.post("/favoritos/:id",(req,res)=>{
     let id = req.params.id;
     let idUsuario = req.body.idUsuario;
@@ -55,7 +48,7 @@ app.post("/favoritos/:id",(req,res)=>{
 
 })
 
-//Sera obrigado mandar o id do usuario para esta requisição
+//Listar favoritos de um usuario
 app.get("/favoritos/:id",(req,res)=>{
     let id = req.params.id;
     UsuariosReceitas.findAll({where:{UsuarioId:id},raw:true}).then(async (resposta)=>{
@@ -96,6 +89,8 @@ app.get("/receita/:id",async (req,res)=>{
     })
 })
 
+
+//Função postar receita
 app.post("/receita",async (req,res)=>{
     let idUsuario = req.body.idUsuario;
     let nomeReceita = req.body.nome;
@@ -141,11 +136,26 @@ app.post("/receita",async (req,res)=>{
     })
 })
 
-app.delete("/receita/:id",(req,res)=>{
-    
+//Listar receitas criadas pelo usuario
+app.get("/receitasCriadas",(req,res)=>{
+    let idUsuario = req.body.idUsuario;
+    Receitas.findAll({where:{UserId:idUsuario}}).then((resposta)=>{
+        console.log(resposta);
+        res.json(resposta)
+    })
+})
+
+//Remover receitas criadas pelo usuario
+app.delete("/receitasCriadas",(req,res)=>{
+    let idReceita = req.body.idReceita;
+    Receitas.destroy({where:{id:idReceita}}).then((resposta)=>{
+        console.log("Deletada com sucesso")
+    })
 })
 
 
+
+//receitas lista principal
 app.get("/receitas",async(req,res)=>{
     let decisao = req.body.decisao;
     let arra = req.body.id;
