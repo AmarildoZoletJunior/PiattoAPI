@@ -20,8 +20,8 @@ medidas.hasOne(receitasIngredientes, {
 });
 
 receitasIngredientes.belongsTo(medidas);
-
-medidas.sync({ force: false });
 receitasIngredientes.sync();
+medidas.sync({ force: false });
+
 
 module.exports = medidas;

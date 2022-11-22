@@ -15,10 +15,16 @@ app.use(session({
 }))
 
 //Importando models
-const Usuarios = require("./Database/Models/Usuarios/Usuarios")
-const Receitas = require("./Database/Models/Receitas/Receita")
-const UsuariosReceitas = require("./Database/Models/Migrations/UsuarioReceita/Usuarios_has_Receitas");
-const ReceitasIngredientes = require("./Database/Models/Migrations/ReceitaIngrediente/Receita_has_Ingredientes");
+   const Usuarios = require("./Database/Models/Usuarios/Usuarios");
+     // const Receitas = require("./Database/Models/Receitas/Receita");
+     // const Ingredientes = require("./Database/Models/Ingredientes/Ingredientes");
+    //const UsuariosReceitas = require("./Database/Models/Migrations/UsuarioReceita/Usuarios_has_Receitas");
+       // const Medidas = require("./Database/Models/Medidas/Medidas");
+ //const ReceitasIngredientes = require("./Database/Models/Migrations/ReceitaIngrediente/Receita_has_Ingredientes");
+
+
+
+
 
 //Configurações
 const PORT = process.env.PORT || 3000;
@@ -191,6 +197,8 @@ app.get("/receitas",adminAuth,async(req,res)=>{
                     //Retorna todas as receitas que tem aquele ingrediente
                     Receitas.findAll({where:{id:arrayReceita}}).then((resposta)=>{
                         res.json(resposta)
+                    }).catch((erro)=>{
+                        console.log(erro)
                     })
                 }).catch(()=>{
                     res.sendStatus(400);
@@ -271,7 +279,7 @@ app.get("/receitas",adminAuth,async(req,res)=>{
                             return;
                         }
                     }
-                    }).catch(()=>{
+                    }).catch((a)=>{
                         res.sendStatus(404);
                         res.statusCode = 404;
                     })
@@ -292,7 +300,7 @@ app.get("/receitas",adminAuth,async(req,res)=>{
                     })
         
                 },1500)
-                }).catch((erro)=>{
+                }).catch((erro)=>{ ///aq
                     res.sendStatus(404);
                     res.statusCode = 404;
                 })
@@ -523,6 +531,8 @@ app.get("/usuario",(req,res)=>{
             res.sendStatus(200);
             res.statusCode = 200;
         }
+    }).catch((err)=>{
+console.log(err)
     });
 })
 
@@ -535,7 +545,7 @@ app.get("/usuariosair",(req,res)=>{
 
 
 //Start server.
-app.listen(PORT,"192.168.0.101",()=>{
+app.listen(PORT,()=>{
     try{
     console.log("Servidor iniciado em: http://localhost:3000");
     } catch(erro){
