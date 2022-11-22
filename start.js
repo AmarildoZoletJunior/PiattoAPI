@@ -3,10 +3,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { Op } = require("sequelize");
+const session = require("express-session");
 
 //Iniciando banco e express
 const connection = require("./Database/Connection/connection");
 const app = express();
+
+//Configuração de sessão
+app.use(session({
+    secret:"ApiPiatto", cookie:{maxAge: 1000000000000000}
+}))
 
 //Importando models
 const Usuarios = require("./Database/Models/Usuarios/Usuarios")
@@ -20,11 +26,20 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(cors());
 
+function adminAuth(req,res,next){
+    if(req.session.IdUsuarioLogado != undefined){
+        next();
+    }else{
+        res.sendStatus(400);
+        res.statusCode = 400;
+    }
+}
+
 
 //Deletar dos favoritos  OK
-app.delete("/favoritos/:id",(req,res)=>{
+app.delete("/favoritos/:id",adminAuth,(req,res)=>{
     let id = req.params.id;
-    let idUsuario = req.body.idUsuario;
+    let idUsuario =  req.session.IdUsuarioLogado;
     if(id != null && id != undefined){
         if(idUsuario != null && idUsuario != undefined){
             UsuariosReceitas.destroy({
@@ -54,9 +69,9 @@ app.delete("/favoritos/:id",(req,res)=>{
 })
 
 //Adicionar aos favoritos OK
-app.post("/favoritos/:id",(req,res)=>{
+app.post("/favoritos/:id",adminAuth,(req,res)=>{
     let id = req.params.id;
-    let idUsuario = req.body.idUsuario;
+    let idUsuario =  req.session.IdUsuarioLogado;
     if(id != null && id != undefined && idUsuario != null && idUsuario != undefined){
         UsuariosReceitas.create({
             UsuarioId: idUsuario,
@@ -75,8 +90,8 @@ app.post("/favoritos/:id",(req,res)=>{
 })
 
 //Listar favoritos de um usuario OK
-app.get("/favoritos/:id",(req,res)=>{
-    let id = req.params.id;
+app.get("/favoritos",adminAuth,(req,res)=>{
+    let id =  req.session.IdUsuarioLogado;
     console.log(typeof id)
     if(id != undefined && id != null){
         UsuariosReceitas.findAll({where:{UsuarioId:id},raw:true}).then(async (resposta)=>{
@@ -108,7 +123,7 @@ app.get("/favoritos/:id",(req,res)=>{
 
 
 //Receita Solo
-app.get("/receita/:id",async (req,res)=>{
+app.get("/receita/:id",adminAuth,async (req,res)=>{
     let id = req.params.id;
     let array = [];
     if(id != null && id != undefined){
@@ -150,7 +165,7 @@ app.get("/receita/:id",async (req,res)=>{
 
 
 //receitas lista principal
-app.get("/receitas",async(req,res)=>{
+app.get("/receitas",adminAuth,async(req,res)=>{
     let decisao = req.body.decisao;
     let arra = req.body.id;
     var final = [];
@@ -294,8 +309,8 @@ app.get("/receitas",async(req,res)=>{
 
 
 //Função Criar receita
-app.post("/receitasCriadas",async (req,res)=>{
-    let idUsuario = req.body.idUsuario;
+app.post("/receitasCriadas",adminAuth,async (req,res)=>{
+    let idUsuario =  req.session.IdUsuarioLogado;
     let nomeReceita = req.body.nome;
     let modoPreparo = req.body.preparo;
     let rendimento = req.body.rendimento;
@@ -374,8 +389,8 @@ app.post("/receitasCriadas",async (req,res)=>{
 })
 
 //Listar receitas criadas pelo usuario
-app.get("/receitasCriadas",(req,res)=>{
-    let idUsuario = req.body.idUsuario;
+app.get("/receitasCriadas",adminAuth,(req,res)=>{
+    let idUsuario =  req.session.IdUsuarioLogado;
     Receitas.findAll({where:{UserId:idUsuario}}).then((resposta)=>{
         if(resposta.length != 0){
 res.json(resposta)
@@ -391,7 +406,7 @@ res.statusCode = 200;
 })
 
 //Remover receitas criadas pelo usuario
-app.delete("/receitasCriadas",(req,res)=>{
+app.delete("/receitasCriadas",adminAuth,(req,res)=>{
     let idReceita = req.body.idReceita;
     if(idReceita != null && idReceita != undefined){
         Receitas.destroy({where:{id:idReceita}}).then((resposta)=>{
@@ -409,7 +424,7 @@ app.delete("/receitasCriadas",(req,res)=>{
 
 
 //Modificar Receita
-app.put("/receitasCriadas",(req,res)=>{
+app.put("/receitasCriadas",adminAuth,(req,res)=>{
     let idReceita = req.body.idReceita;
     let nome = req.body.nome;
     let preparo = req.body.preparo;
@@ -449,30 +464,78 @@ app.put("/receitasCriadas",(req,res)=>{
 })
 
 //Criar usuario
-app.post("/usuario",(req,res)=>{
+app.post("/usuario",adminAuth,(req,res)=>{
     let regexEmail = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi;
     let email = req.body.email;
     let senha = req.body.senha;
     let confirmarSenha = req.body.confirmarsenha;
-    if(email !== undefined && email !== null && regexEmail.test(email) === true){
-        if(senha !== undefined && senha !== null && senha.length > 3 && senha === confirmarSenha){
-    Usuarios.create({
-        email:senha,
-        senha:senha
-                 }).then((resposta)=>{
-                    res.sendStatus(200);
-                res.statusCode = 200;
-                 }).catch(()=>{
+    Usuarios.findAll({where:{email:email}}).then((resposta)=>{
+        if(resposta.length !== 0){
+            res.sendStatus(401);
+            res.statusCode = 401;
+        }else{
+            if(email !== undefined && email !== null && regexEmail.test(email) === true){
+                if(senha !== undefined && senha !== null && senha.length > 3 && senha === confirmarSenha){
+            Usuarios.create({
+                email:senha,
+                senha:senha
+                         }).then((resposta)=>{
+                            res.sendStatus(200);
+                        res.statusCode = 200;
+                         }).catch(()=>{
+                            console.log("Teste1");
+                            res.sendStatus(400);
+                            res.statusCode = 400;
+                         })
+                }else{
+                    console.log("Teste2");
                     res.sendStatus(400);
                     res.statusCode = 400;
-                 })
-            }
+                }
+        }else{
+            console.log("Teste3");
+            res.sendStatus(400);
+            res.statusCode = 400;
         }
-});
+        }
+    }).then(()=>{
+       
+    }).catch((err)=>{
+        console.log("Teste4");
+        res.sendStatus(400);
+        res.statusCode = 400;
+    });
+    });
+
+
+//Logar no aplicativo
+app.get("/usuario",(req,res)=>{
+    let email = req.body.email;
+    let senha = req.body.senha;
+    Usuarios.findOne({where:{email: email,senha:senha}}).then((resposta)=>{
+        if(resposta == null){
+            res.sendStatus(400);
+            res.statusCode = 400;
+        }else{
+            req.session.IdUsuarioLogado = resposta.id;
+            req.session.NomeUsuarioLogado = resposta.email;
+            req.session.SenhaUsuarioLogado = resposta.senha;
+            res.sendStatus(200);
+            res.statusCode = 200;
+        }
+    });
+})
+
+
+app.get("/usuariosair",(req,res)=>{
+    req.session.IdUsuarioLogado = null;
+            req.session.NomeUsuarioLogado = null;
+            req.session.SenhaUsuarioLogado = null;
+})
 
 
 //Start server.
-app.listen(PORT,()=>{
+app.listen(PORT,"192.168.0.101",()=>{
     try{
     console.log("Servidor iniciado em: http://localhost:3000");
     } catch(erro){
